@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        :root {
+            --light-theme: 0;
+            --main-background-colour: rgb(29, 29, 28);
+            --main-color: white;
+            --main-qr-bg: rgb(23, 21, 21);
+        }
+
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            font-size: medium;
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            background-color: var(--main-background-colour);
+            color: var(--main-color);
+            /* 👈 text color changes properly now */
+        }
+
+        #theme div {
+            border-radius: 100%;
+            transition: width 300ms, height 300ms, background-color 300ms;
+        }
+
+        #theme img {
+            width: 2vw;
+            height: 2vw;
+            transition: width 100ms, height 100ms;
+        }
+
+        #theme div:hover {
+            background-color: rgb(93, 92, 92);
+        }
+
+        #form input {
+            font-weight: normal;
+            background-color: rgba(255, 255, 255, 0.1);
+            /* translucent background */
+            color: white;
+            border: 2px solid black;
+            padding: 3px;
+            border-radius: 5px;
+        }
+
+        /* #see:hover {
+            cursor: pointer;
+            background-color: rgb(114, 114, 114);
+        } */
+
+        #generate {
+            background-color: yellowgreen;
+
+        }
+
+        #generate:hover {
+            cursor: pointer;
+            background-color: rgb(207, 255, 135);
+
+        }
+
+        #see:hover {
+            cursor: pointer;
+            background-color: rgb(114, 114, 114);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div style="width: 100%;">
+
+        <div id="theme" style="display: flex; justify-content: flex-end; padding: 5px;">
+            <div style="width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;">
+                <img style="width: 30px; height: 30px;" src="sun.png" alt="sun">
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <div style="padding: 36px; background-color: var(--main-qr-bg);
+                display: flex; flex-direction: column; justify-content: center; align-items: center;
+                border-radius: 10px">
+                <div id="greet" style="margin-bottom: 20px;">Hello!</div>
+                <div id="qrcode"></div>
+            </div>
+        </div>
+
+        <div id="form"
+            style="display: flex; justify-content: center; align-items: center; position: relative; top: 2vh;">
+            <div>
+                <div>
+                    <label for="ip">ip address</label>
+                    <input type="text" id="ip" placeholder="Enter your ip address"
+                        style="width: 250px; height: 40px; opacity: 0.5;">
+                </div>
+                <div style="position: relative; top: 2vh;">
+                    <label for="filePath">File name</label>
+                    <input type="text" id="filePath" placeholder="Enter relative path to your file"
+                        style="width: 250px; height: 40px; opacity: 0.5;">
+                </div>
+                <div style="margin-top: 20px;">
+                    <button id="generate" style="padding: 5px; border-radius: 5px; border:1px solid greenyellow; "
+                        type="submit" onclick="generateQR()">Generate
+                        QR</button>
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10px; text-align: left;"
+            id="seeinfo">
+            <div style="width: 50px; padding: 8px; border-radius: 10px; display: flex; align-items: center; justify-content: center;"
+                id="see">
+                see</div>
+            <div id="info"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/kjua@0.1.1/dist/kjua.min.js"></script>
+    <script>
+
+        let buttonclicked = 0;
+        let seeclicked = 0;
+
+        async function generateQR(fill = 'white', back = 'rgb(23,21,21)') {
+
+            if (buttonclicked == 1) {
+                document.getElementById('qrcode').innerText = "";
+            }
+
+            buttonclicked = 1;
+
+            const ip = document.getElementById('ip').value;
+            const filePath = document.getElementById('filePath').value;
+            const port = 5500;
+
+            if (!filePath && !ip) {
+                document.getElementById('qrcode').innerText = "Relative filepath of the html page or ip not entered.";
+                return;
+            }
+
+            // Generate QR dynamically
+
+            const url = `http://${ip}:${port}/${filePath}`;
+
+            const qr = kjua({
+                text: url,
+                size: 200,
+                fill: fill,
+                back: back
+            });
+            document.getElementById('greet').innerText = "Your QR is here";
+            document.getElementById('qrcode').appendChild(qr);
+
+        }
+
+        // document.addEventListener('click')
+
+        // generateQR()
+
+        const theme_btn = document.getElementById("theme");
+
+        const theme_toggles = {
+            lightTheme: `<img style="width: 30px; height: 30px;" src="moon.png" alt="moon">`,
+            darkTheme: `<img style="width: 30px; height: 30px;" src="sun.png" alt="sun">`
+        }
+
+        // theme change toggle
+        theme_btn.addEventListener("click", () => {
+            let root = document.documentElement;
+            let styles = getComputedStyle(root);
+            let currentTheme = styles.getPropertyValue('--light-theme').trim(); // "0" or "1"
+
+            const darkTheme = {
+                bg_color: "rgb(29, 29, 28)",
+                color: "white",
+                qr_colour: "rgb(23, 21, 21)"
+            };
+
+            const lightTheme = {
+                bg_color: "rgb(201, 196, 196)",
+                color: "black",
+                qr_colour: "rgb(138, 133, 133)"
+            };
+
+            let qrcodeDiv = document.getElementById("qrcode");
+            qrcodeDiv.innerHTML = ""; // clear old QR
+
+            if (currentTheme == "0") {
+                root.style.setProperty("--light-theme", 1);
+                root.style.setProperty("--main-background-colour", lightTheme.bg_color);
+                root.style.setProperty("--main-color", lightTheme.color);
+                root.style.setProperty("--main-qr-bg", lightTheme.qr_colour);
+
+                if (buttonclicked == 1) generateQR("black", lightTheme.qr_colour);
+
+                document.getElementById("theme").getElementsByTagName("div")[0].innerHTML = theme_toggles.lightTheme;
+
+            } else {
+                root.style.setProperty("--light-theme", 0);
+                root.style.setProperty("--main-background-colour", darkTheme.bg_color);
+                root.style.setProperty("--main-color", darkTheme.color);
+                root.style.setProperty("--main-qr-bg", darkTheme.qr_colour);
+
+                if (buttonclicked == 1) generateQR("white", darkTheme.qr_colour);
+
+                document.getElementById("theme").getElementsByTagName("div")[0].innerHTML = theme_toggles.darkTheme;
+            }
+        });
+
+        document.getElementById('see').addEventListener('click', () => {
+
+            if (seeclicked == 0) {
+                seeclicked = 1;
+                document.getElementById('info').innerHTML = `
+            <ul style="display:flex; flex-direction:column; flex-wrap:wrap; margin-left:20px;  margin-bottom:20px ; ">
+                <p>Points to remember:</p>
+                <li>Connect your phone and laptop on same wifi network or connect your laptop to your phone's hotspot.</li>
+                <li>open the desired web page from live server.</li>
+                <li>Enter all the necessary fields.</li>
+                <li>Click generate button and scan the qr.</li>
+            </ul>`;
+            } else {
+                seeclicked = 0;
+                document.getElementById('info').innerHTML = "";
+            }
+        })
+
+    </script>
+
+
+</body>
+
+</html>
