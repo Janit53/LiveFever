@@ -28,7 +28,7 @@
             /* 👈 text color changes properly now */
         }
 
-        #theme div {
+        #theme-toggle {
             border-radius: 100%;
             transition: width 300ms, height 300ms, background-color 300ms;
         }
@@ -39,7 +39,7 @@
             transition: width 100ms, height 100ms;
         }
 
-        #theme div:hover {
+        #theme-toggle:hover {
             background-color: rgb(93, 92, 92);
         }
 
@@ -80,8 +80,12 @@
 
     <div style="width: 100%;">
 
-        <div id="theme" style="display: flex; justify-content: flex-end; padding: 5px;">
-            <div style="width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;">
+        <div id="theme" style="display: flex; justify-content:space-between; padding: 5px;">
+            <div style="display: flex; align-items: center;" class="heading">
+                <p style="font-size: larger; margin-left: 10px;">LiveFever</p>
+            </div>
+            <div id="theme-toggle"
+                style="width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;">
                 <img style="width: 30px; height: 30px;" src="sun.png" alt="sun">
             </div>
         </div>
@@ -166,7 +170,7 @@
 
         // generateQR()
 
-        const theme_btn = document.getElementById("theme");
+        const theme_btn = document.getElementById("theme-toggle");
 
         const theme_toggles = {
             lightTheme: `<img style="width: 30px; height: 30px;" src="moon.png" alt="moon">`,
@@ -202,7 +206,7 @@
 
                 if (buttonclicked == 1) generateQR("black", lightTheme.qr_colour);
 
-                document.getElementById("theme").getElementsByTagName("div")[0].innerHTML = theme_toggles.lightTheme;
+                document.getElementById("theme").getElementsByTagName("div")[1].innerHTML = theme_toggles.lightTheme;
 
             } else {
                 root.style.setProperty("--light-theme", 0);
@@ -212,7 +216,7 @@
 
                 if (buttonclicked == 1) generateQR("white", darkTheme.qr_colour);
 
-                document.getElementById("theme").getElementsByTagName("div")[0].innerHTML = theme_toggles.darkTheme;
+                document.getElementById("theme").getElementsByTagName("div")[1].innerHTML = theme_toggles.darkTheme;
             }
         });
 
